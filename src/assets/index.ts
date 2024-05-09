@@ -16,6 +16,9 @@ const assets = {
   },
   svgs: {
     logo: require("./svgs/logo.svg"),
+    care: require("./svgs/care-icon.svg"),
+    equipment: require("./svgs/medical-equipment-icon.svg"),
+    call: require("./svgs/call-icon.svg"),
     search: require("./svgs/search.svg"),
     calender: require("./svgs/calender.svg"),
     location: require("./svgs/location.svg"),
