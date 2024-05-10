@@ -11,10 +11,12 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
+import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 
 const TopRatedDoctors = async () => {
-  const res = await fetch("http://localhost:5000/api/doctors?page=1&limit=3");
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/doctors?page=1&limit=3`
+  );
   const { data: doctors } = await res.json();
 
   return (
@@ -61,7 +63,12 @@ const TopRatedDoctors = async () => {
                   <Typography variant="body2" color="text.secondary" mt={1}>
                     <LocationOnOutlinedIcon /> {doctor.address}
                   </Typography>
-                  <Typography variant="body2" fontWeight={600} color="text.secondary" mt={1}>
+                  <Typography
+                    variant="body2"
+                    fontWeight={600}
+                    color="text.secondary"
+                    mt={1}
+                  >
                     <PaidOutlinedIcon /> {doctor.appointmentFee}Tk
                   </Typography>
                 </CardContent>
