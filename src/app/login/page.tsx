@@ -1,4 +1,9 @@
+"use client";
 import assets from "@/assets";
+import LLForm from "@/components/Forms/LLForm";
+import LLInput from "@/components/Forms/LLInput";
+import { loginUser } from "@/services/actions/loginUser";
+import { storeUserInfo } from "@/services/auth.services";
 import {
   Box,
   Button,
@@ -10,8 +15,30 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { SubmitHandler, FieldValues } from "react-hook-form";
+import { toast } from "sonner";
+
+export type TLoginFormValues = {
+  email: string;
+  password: string;
+};
 
 const LoginPage = () => {
+  const router = useRouter();
+
+  const submit: SubmitHandler<FieldValues> = async (values) => {
+    try {
+      const res = await loginUser(values);
+      if (res?.data?.accessToken) {
+        toast.success(res?.message, { duration: 5000 });
+        storeUserInfo(res?.data?.accessToken);
+        router.push("/");
+      }
+    } catch (err: any) {
+      console.log(err.message);
+    }
+  };
 
   return (
     <Container>
@@ -44,25 +71,21 @@ const LoginPage = () => {
             </Box>
           </Stack>
 
-          <form>
+          <LLForm onSubmit={submit}>
             <Grid container spacing={2} my={2}>
               <Grid item md={6}>
-                <TextField
-                  id="email"
+                <LLInput
+                  name="email"
                   label="Email"
                   type="email"
-                  variant="outlined"
-                  size="small"
                   fullWidth={true}
                 />
               </Grid>
               <Grid item md={6}>
-                <TextField
-                  id="password"
+                <LLInput
+                  name="password"
                   type="password"
                   label="Password"
-                  variant="outlined"
-                  size="small"
                   fullWidth={true}
                 />
               </Grid>
@@ -73,7 +96,7 @@ const LoginPage = () => {
               </Typography>
             </Box>
 
-            <Button fullWidth={true} sx={{ margin: "16px 0px" }}>
+            <Button fullWidth={true} sx={{ margin: "16px 0px" }} type="submit">
               Login
             </Button>
             <Box>
@@ -82,7 +105,7 @@ const LoginPage = () => {
                 <Link href="/register">Create an account</Link>
               </Typography>
             </Box>
-          </form>
+          </LLForm>
         </Box>
       </Stack>
     </Container>

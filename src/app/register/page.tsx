@@ -12,40 +12,33 @@ import Image from "next/image";
 import React from "react";
 import assets from "@/assets";
 import Link from "next/link";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 import { modifyPayload } from "@/utils/modifyPayload";
 import { registerPatient } from "@/services/actions/registerPatient";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
-type TPatientRegisterFormData = {
-  password: string;
-  patient: TPatientData;
-};
-
-type TPatientData = {
-  name: string;
-  email: string;
-  contactNumber: string;
-  address: string;
-};
+import { loginUser } from "@/services/actions/loginUser";
+import { storeUserInfo } from "@/services/auth.services";
+import LLForm from "@/components/Forms/LLForm";
+import LLInput from "@/components/Forms/LLInput";
 
 const RegisterPage = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<TPatientRegisterFormData>();
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<TPatientRegisterFormData> = async (values) => {
+  const submit = async (values: FieldValues) => {
     const data = modifyPayload(values);
     try {
       const res = await registerPatient(data);
       if (res?.data?.id) {
-        toast.success(res?.message);
-        router.push("/login");
+        toast.success(res?.message, { duration: 5000 });
+        const result = await loginUser({
+          password: values.password,
+          email: values.patient.email,
+        });
+        if (result?.data?.accessToken) {
+          storeUserInfo(result?.data?.accessToken);
+          router.push("/");
+        }
       }
     } catch (err: any) {
       console.log(err.message);
@@ -83,54 +76,40 @@ const RegisterPage = () => {
             </Box>
           </Stack>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <LLForm onSubmit={submit}>
             <Grid container spacing={2} my={2}>
               <Grid item md={12}>
-                <TextField
-                  label="Name"
-                  variant="outlined"
-                  size="small"
-                  fullWidth={true}
-                  {...register("patient.name", { required: true })}
-                />
+                <LLInput name="patient.name" label="Name" fullWidth={true} />
               </Grid>
               <Grid item md={6}>
-                <TextField
+                <LLInput
+                  name="patient.email"
                   label="Email"
                   type="email"
-                  variant="outlined"
-                  size="small"
                   fullWidth={true}
-                  {...register("patient.email", { required: true })}
                 />
               </Grid>
               <Grid item md={6}>
-                <TextField
+                <LLInput
+                  name="password"
                   type="password"
                   label="Password"
-                  variant="outlined"
-                  size="small"
                   fullWidth={true}
-                  {...register("password", { required: true })}
                 />
               </Grid>
               <Grid item md={6}>
-                <TextField
+                <LLInput
+                  name="patient.contactNumber"
                   label="Contact Number"
                   type="tel"
-                  variant="outlined"
-                  size="small"
                   fullWidth={true}
-                  {...register("patient.contactNumber", { required: true })}
                 />
               </Grid>
               <Grid item md={6}>
-                <TextField
+                <LLInput
+                  name="patient.address"
                   label="Address"
-                  variant="outlined"
-                  size="small"
                   fullWidth={true}
-                  {...register("patient.address", { required: true })}
                 />
               </Grid>
             </Grid>
@@ -142,7 +121,7 @@ const RegisterPage = () => {
                 Do you already have an account? <Link href="/login">Login</Link>
               </Typography>
             </Box>
-          </form>
+          </LLForm>
         </Box>
       </Stack>
     </Container>
