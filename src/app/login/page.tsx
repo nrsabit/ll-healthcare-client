@@ -4,6 +4,7 @@ import LLForm from "@/components/Forms/LLForm";
 import LLInput from "@/components/Forms/LLInput";
 import { loginUser } from "@/services/actions/loginUser";
 import { storeUserInfo } from "@/services/auth.services";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
   Button,
@@ -18,11 +19,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, FieldValues } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
 export type TLoginFormValues = {
   email: string;
   password: string;
 };
+
+const loginValidationSchema = z.object({
+  email: z.string().email("Must be a valid email"),
+  password: z.string().min(6, "Password should be at leaset 6 characters"),
+});
 
 const LoginPage = () => {
   const router = useRouter();
@@ -33,7 +40,9 @@ const LoginPage = () => {
       if (res?.data?.accessToken) {
         toast.success(res?.message, { duration: 5000 });
         storeUserInfo(res?.data?.accessToken);
-        router.push("/");
+        router.push("/dashboard");
+      } else {
+        toast.error(res?.message, { duration: 5000 });
       }
     } catch (err: any) {
       console.log(err.message);
@@ -71,7 +80,14 @@ const LoginPage = () => {
             </Box>
           </Stack>
 
-          <LLForm onSubmit={submit}>
+          <LLForm
+            onSubmit={submit}
+            resolver={zodResolver(loginValidationSchema)}
+            defaultValues={{
+              email: "",
+              password: "",
+            }}
+          >
             <Grid container spacing={2} my={2}>
               <Grid item md={6}>
                 <LLInput

@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { SxProps, TextField } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 
 type TFormINputProps = {
@@ -6,7 +6,10 @@ type TFormINputProps = {
   type?: string;
   label?: string;
   size?: "small" | "medium";
-  fullWidth: boolean;
+  fullWidth?: boolean;
+  sx?: SxProps;
+  placeholder?: string;
+  required?: boolean;
 };
 
 const LLInput = ({
@@ -15,13 +18,16 @@ const LLInput = ({
   label,
   size = "small",
   fullWidth,
+  sx,
+  placeholder,
+  required,
 }: TFormINputProps) => {
   const { control } = useFormContext();
   return (
     <Controller
       control={control}
       name={name}
-      render={({ field }) => (
+      render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
           name={name}
@@ -30,6 +36,11 @@ const LLInput = ({
           variant="outlined"
           size={size}
           fullWidth={fullWidth}
+          sx={sx}
+          placeholder={placeholder}
+          required={required}
+          error={!!error?.message}
+          helperText={error?.message}
         />
       )}
     />

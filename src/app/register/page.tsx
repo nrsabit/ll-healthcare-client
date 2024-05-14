@@ -1,13 +1,5 @@
 "use client";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import React from "react";
 import assets from "@/assets";
@@ -21,6 +13,32 @@ import { loginUser } from "@/services/actions/loginUser";
 import { storeUserInfo } from "@/services/auth.services";
 import LLForm from "@/components/Forms/LLForm";
 import LLInput from "@/components/Forms/LLInput";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+export const patientValidationSchema = z.object({
+  name: z.string().min(1, "Please enter your name!"),
+  email: z.string().email("Please enter a valid email address!"),
+  contactNumber: z
+    .string()
+    .regex(/^\d{11}$/, "Please provide a valid phone number!"),
+  address: z.string().min(1, "Please enter your address!"),
+});
+
+export const validationSchema = z.object({
+  password: z.string().min(6, "Must be at least 6 characters"),
+  patient: patientValidationSchema,
+});
+
+export const defaultValues = {
+  password: "",
+  patient: {
+    name: "",
+    email: "",
+    contactNumber: "",
+    address: "",
+  },
+};
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -37,7 +55,7 @@ const RegisterPage = () => {
         });
         if (result?.data?.accessToken) {
           storeUserInfo(result?.data?.accessToken);
-          router.push("/");
+          router.push("/dashboard");
         }
       }
     } catch (err: any) {
@@ -76,7 +94,11 @@ const RegisterPage = () => {
             </Box>
           </Stack>
 
-          <LLForm onSubmit={submit}>
+          <LLForm
+            onSubmit={submit}
+            defaultValues={defaultValues}
+            resolver={zodResolver(validationSchema)}
+          >
             <Grid container spacing={2} my={2}>
               <Grid item md={12}>
                 <LLInput name="patient.name" label="Name" fullWidth={true} />

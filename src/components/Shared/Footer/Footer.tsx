@@ -52,7 +52,7 @@ const Footer = () => {
             height={30}
           ></Image>
         </Stack>
-        <div className="border-b-[1px] border-dashed"></div>
+        <Box sx={{ border: "1px dashed" }}></Box>
 
         <Stack
           direction="row"
