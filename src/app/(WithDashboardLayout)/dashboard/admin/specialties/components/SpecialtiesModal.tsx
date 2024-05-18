@@ -1,7 +1,7 @@
 import LLFileUploader from "@/components/Forms/LLFileUploader";
 import LLForm from "@/components/Forms/LLForm";
 import LLInput from "@/components/Forms/LLInput";
-import LLModal from "@/components/Forms/LLModal";
+import LLModal from "@/components/Shared/LLModals/LLModal";
 import { useCreateSpecialtyMutation } from "@/redux/api/specialtiesApi";
 import { modifyPayload } from "@/utils/modifyPayload";
 import { Button, Grid } from "@mui/material";
