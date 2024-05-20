@@ -22,7 +22,7 @@ export const scheduleApi = baseApi.injectEndpoints({
       },
       transformResponse: (response: any, meta: TMeta) => {
         return {
-          schedules: response,
+          schedules: response?.data,
           meta,
         };
       },
