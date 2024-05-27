@@ -40,7 +40,7 @@ const LoginPage = () => {
       if (res?.data?.accessToken) {
         toast.success(res?.message, { duration: 5000 });
         storeUserInfo(res?.data?.accessToken);
-        router.push("/dashboard");
+        // router.push("/dashboard");
       } else {
         toast.error(res?.message, { duration: 5000 });
       }

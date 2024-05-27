@@ -1,5 +1,6 @@
 "use client";
 
+import { logoutUser } from "@/services/actions/logoutUser";
 import { getUserInfo, removeUserInfo } from "@/services/auth.services";
 import { Button } from "@mui/material";
 import Link from "next/link";
@@ -10,8 +11,7 @@ const AuthButtons = () => {
   const userInfo = getUserInfo();
 
   const handleLogOut = () => {
-    removeUserInfo();
-    router.refresh();
+    logoutUser(router);
   };
   return (
     <>

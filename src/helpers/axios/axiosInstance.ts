@@ -32,11 +32,14 @@ instance.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
-    const responseObject: TResponseSuccessType = {
-      data: response?.data?.data,
-      meta: response?.data?.meta,
-    };
-    return responseObject;
+    if (response?.data?.data) {
+      const responseObject: TResponseSuccessType = {
+        data: response?.data?.data,
+        meta: response?.data?.meta,
+      };
+      return responseObject;
+    }
+    return response;
   },
   async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
